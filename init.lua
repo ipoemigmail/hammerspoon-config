@@ -17,7 +17,11 @@ hs.hotkey.bind(T.bindKeys(), "c", function()
   W.locateCenter()
 end)
 
-hs.hotkey.bind(T.bindKeys(), "return", function()
+hs.hotkey.bind(T.bindKeys(), "delete", function()
   W.resizeDefault()
   W.locateCenter()
+end)
+
+hs.hotkey.bind(T.bindKeys(), "return", function()
+  W.toggleMax()
 end)

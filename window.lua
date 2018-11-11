@@ -1,6 +1,6 @@
 local C = require "console"
 
-local window = {}
+local W = {}
 
 local resizeFactor = 0.07
 local minimumWidthFactor = 2 * resizeFactor
@@ -8,12 +8,23 @@ local minimumHeightFactor = 3 * resizeFactor
 local defaultWidthFactor = 3.5 / 5
 local defaultWindowRatio = 10.0 / 16
 
-function window.resizeMax()
-  window.resizeMaxWidth()
-  window.resizeMaxHeight()
+function W.resizeMax()
+  W.resizeMaxWidth()
+  W.resizeMaxHeight()
 end
 
-function window.resizeHalfWidth()
+function W.toggleMax()
+  if (W.isCurrentWindowMax()) then
+    W.resizeDefault() 
+    W.locateCenter()
+  else
+    W.resizeMax()
+    W.locateLeft()
+    W.locateTop()
+  end
+end
+
+function W.resizeHalfWidth()
   local win = hs.window.focusedWindow()
   local f = win:frame()
   local screen = win:screen()
@@ -23,7 +34,7 @@ function window.resizeHalfWidth()
   win:setFrame(f)
 end
 
-function window.resizeMaxWidth()
+function W.resizeMaxWidth()
   local win = hs.window.focusedWindow()
   local f = win:frame()
   local screen = win:screen()
@@ -33,7 +44,7 @@ function window.resizeMaxWidth()
   win:setFrame(f)
 end
 
-function window.resizeHalfHeight()
+function W.resizeHalfHeight()
   local win = hs.window.focusedWindow()
   local f = win:frame()
   local screen = win:screen()
@@ -43,7 +54,7 @@ function window.resizeHalfHeight()
   win:setFrame(f)
 end
 
-function window.resizeMaxHeight()
+function W.resizeMaxHeight()
   local win = hs.window.focusedWindow()
   local f = win:frame()
   local screen = win:screen()
@@ -53,7 +64,7 @@ function window.resizeMaxHeight()
   win:setFrame(f)
 end
 
-function window.locateLeft()
+function W.locateLeft()
   local win = hs.window.focusedWindow()
   local f = win:frame()
   local screen = win:screen()
@@ -63,7 +74,7 @@ function window.locateLeft()
   win:setFrame(f)
 end
 
-function window.locateTop()
+function W.locateTop()
   local win = hs.window.focusedWindow()
   local f = win:frame()
   local screen = win:screen()
@@ -73,7 +84,7 @@ function window.locateTop()
   win:setFrame(f)
 end
 
-function window.locateRight()
+function W.locateRight()
   local win = hs.window.focusedWindow()
   local f = win:frame()
   local screen = win:screen()
@@ -83,7 +94,7 @@ function window.locateRight()
   win:setFrame(f)
 end
 
-function window.locateDown()
+function W.locateDown()
   local win = hs.window.focusedWindow()
   local f = win:frame()
   local screen = win:screen()
@@ -93,7 +104,7 @@ function window.locateDown()
   win:setFrame(f)
 end
 
-function window.resizeLarger()
+function W.resizeLarger()
   local win = hs.window.focusedWindow()
   local f = win:frame()
   local screen = win:screen()
@@ -109,7 +120,7 @@ function window.resizeLarger()
   win:setFrame(f)
 end
 
-function window.resizeSmaller()
+function W.resizeSmaller()
   local win = hs.window.focusedWindow()
   local f = win:frame()
   local screen = win:screen()
@@ -127,7 +138,7 @@ function window.resizeSmaller()
   win:setFrame(f)
 end
 
-function window.locateCenter()
+function W.locateCenter()
   local win = hs.window.focusedWindow()
   local f = win:frame()
   local screen = win:screen()
@@ -141,7 +152,7 @@ function window.locateCenter()
   win:setFrame(f)
 end
 
-function window.resizeDefault()
+function W.resizeDefault()
   local win = hs.window.focusedWindow()
   local f = win:frame()
   local screen = win:screen()
@@ -154,7 +165,7 @@ function window.resizeDefault()
   win:setFrame(f)
 end
 
-function window.move(deltaX, deltaY, duration)
+function W.move(deltaX, deltaY, duration)
   local win = hs.window.focusedWindow()
   local f = win:frame()
 
@@ -163,7 +174,7 @@ function window.move(deltaX, deltaY, duration)
   win:setFrame(f, duration)
 end
 
-function window.isCurrentWindowMax()
+function W.isCurrentWindowMax()
   local win = hs.window.focusedWindow()
   local f = win:frame()
   local screen = win:screen()
@@ -182,4 +193,4 @@ function window.isCurrentWindowMax()
 
 end
 
-return window
+return W

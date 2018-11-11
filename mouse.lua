@@ -15,18 +15,7 @@ local downKeyDown = false
 hs.eventtap.new({events.leftMouseDown}, function(event)
   local status, err = pcall(function()
     if (event:getProperty(eventProperties["mouseEventClickState"]) == 2 and T.isBindKeyDown(event)) then
-      local win = hs.window.focusedWindow()
-      local f = win:frame()
-      local screen = win:screen()
-      local max = screen:frame()
-      if (W.isCurrentWindowMax()) then
-        W.resizeDefault() 
-        W.locateCenter()
-      else
-        W.resizeMax()
-        W.locateLeft()
-        W.locateTop()
-      end
+      W.toggleMax()
       return true
     elseif (T.isBindKeyDown(event)) then
       return true
