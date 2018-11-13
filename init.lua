@@ -1,7 +1,9 @@
-local C = require "console"
-local T = require "trigger"
-local W = require "window"
-local M = require "mouse"
+require "lib/autoreload"
+local C = require "lib/console"
+local T = require "lib/trigger"
+local W = require "lib/window"
+local M = require "lib/mouse"
+local K = require "lib/keyboard"
 
 hs.hotkey.bind(T.bindKeys(), "=", function()
   W.resizeLarger()

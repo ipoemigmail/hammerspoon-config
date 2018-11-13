@@ -1,4 +1,4 @@
-local C = require "console"
+local C = require "lib/console"
 
 local W = {}
 

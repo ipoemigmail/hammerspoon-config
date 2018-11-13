@@ -1,8 +1,8 @@
-local C = require "console"
-local T = require "trigger"
-local W = require "window"
+local C = require "lib/console"
+local T = require "lib/trigger"
+local W = require "lib/window"
 
-local mouse = {}
+local K = {}
 
 local events = hs.eventtap.event.types
 local eventProperties = hs.eventtap.event.properties
@@ -12,40 +12,7 @@ local rightKeyDown = false
 local upKeyDown = false
 local downKeyDown = false
 
-hs.eventtap.new({events.leftMouseDown}, function(event)
-  local status, err = pcall(function()
-    if (event:getProperty(eventProperties["mouseEventClickState"]) == 2 and T.isBindKeyDown(event)) then
-      W.toggleMax()
-      return true
-    elseif (T.isBindKeyDown(event)) then
-      return true
-    end
-  end)
-  if (not status) then
-    C.printError(err)
-  end
-  return err
-
-end):start()
-
-hs.eventtap.new({events.leftMouseDragged}, function(event)
-  local status, err = pcall(function()
-    if (T.isBindKeyDown(event)) then
-      C.printConsole("left drag: " .. tostring(event:getProperty(eventProperties["mouseEventDeltaX"])) .. ", " .. tostring(event:getProperty(eventProperties["mouseEventDeltaY"])))
-      W.move(event:getProperty(eventProperties["mouseEventDeltaX"]), event:getProperty(eventProperties["mouseEventDeltaY"]), 0)
-      return true
-    end
-  end)
-  if (not status) then
-    C.printError(err)
-    return false
-  else
-    return err
-  end
-
-end):start()
-
-hs.eventtap.new({events.keyDown}, function(event)
+K.keyDownEventTap = hs.eventtap.new({events.keyDown}, function(event)
   local status, err = pcall(function()
     C.printConsole("keyDown: " .. tostring(event:getKeyCode()))
     if (event:getKeyCode() == hs.keycodes.map["left"]) then
@@ -126,7 +93,7 @@ hs.eventtap.new({events.keyDown}, function(event)
 
 end):start()
 
-hs.eventtap.new({events.keyUp}, function(event)
+K.keyUpEventTap = hs.eventtap.new({events.keyUp}, function(event)
   local status, err = pcall(function()
     C.printConsole("keyUp: " .. tostring(event:getKeyCode()))
     if (event:getKeyCode() == hs.keycodes.map["left"]) then
@@ -148,4 +115,4 @@ hs.eventtap.new({events.keyUp}, function(event)
 
 end):start()
 
-return mouse
+return K

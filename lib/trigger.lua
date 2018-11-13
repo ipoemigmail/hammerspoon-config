@@ -1,14 +1,14 @@
-local C = require "console"
+local C = require "lib/console"
 
 local trigger = {}
 
-function bindKeys()
+bindKeys = function()
   return {"cmd", "ctrl"}
 end
 
-trigger["bindKeys"] = bindKeys
+trigger.bindKeys = bindKeys
 
-function trigger.isBindKeyDown(event)
+trigger.isBindKeyDown = function(event)
   local flag = true
   local status, err = pcall(function()
     for i, key in ipairs(bindKeys()) do
