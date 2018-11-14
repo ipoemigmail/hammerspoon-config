@@ -3,6 +3,7 @@ local C = require "lib/console"
 local W = {}
 
 local resizeFactor = 0.07
+local mouseResizeFactor = 0.03
 local minimumWidthFactor = 2 * resizeFactor
 local minimumHeightFactor = 3 * resizeFactor
 local defaultWidthFactor = 3.5 / 5
@@ -96,15 +97,23 @@ function W.resizeMaxHeight()
   end
 end
 
-function W.resize(deltaX, deltaY)
+function W.resize(deltaX, deltaY, duration)
+  W.resizeWithFactor(deltaX, deltaY, resizeFactor, duration)
+end
+
+function W.resizeWithMouse(deltaX, deltaY, duration)
+  W.resizeWithFactor(deltaX, deltaY, mouseResizeFactor, duration)
+end
+
+function W.resizeWithFactor(deltaX, deltaY, factor, duration)
   local status, err = pcall(function()
     local win = hs.window.focusedWindow()
     local f = win:frame()
     local screen = win:screen()
     local max = screen:frame()
 
-    local nextWidth = deltaX + f.w
-    local nextHeight = deltaY + f.h
+    local nextWidth = deltaX * factor* max.w + f.w
+    local nextHeight = deltaY * factor * max.h + f.h
 
     if (nextWidth < max.w * minimumWidthFactor) then nextWidth = max.w * minimumWidthFactor end
     if (nextWidth > max.w) then nextWidth = max.w end
@@ -113,7 +122,7 @@ function W.resize(deltaX, deltaY)
 
     f.w = nextWidth
     f.h = nextHeight
-    win:setFrame(f)
+    win:setFrame(f, duration)
   end)
   if (not status) then
     C.printError(err)
