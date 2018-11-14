@@ -96,6 +96,34 @@ function W.resizeMaxHeight()
   end
 end
 
+function W.resize(deltaX, deltaY)
+  local status, err = pcall(function()
+    local win = hs.window.focusedWindow()
+    local f = win:frame()
+    local screen = win:screen()
+    local max = screen:frame()
+
+    local nextWidth = deltaX + f.w
+    local nextHeight = deltaY + f.h
+
+    if (nextWidth < max.w * minimumWidthFactor) then nextWidth = max.w * minimumWidthFactor end
+    if (nextWidth > max.w) then nextWidth = max.w end
+    if (nextHeight < max.w * minimumHeightFactor) then nextHeight = max.w * minimumHeightFactor end
+    if (nextHeight > max.w) then nextHeight = max.w end
+
+    f.w = nextWidth
+    f.h = nextHeight
+    win:setFrame(f)
+  end)
+  if (not status) then
+    C.printError(err)
+    return false
+  else
+    return err
+  end
+end
+
+
 function W.locateLeft()
   local status, err = pcall(function()
     local win = hs.window.focusedWindow()

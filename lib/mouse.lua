@@ -25,7 +25,18 @@ M.mouseDoubleClickEventTap = hs.eventtap.new({events.leftMouseDown}, function(ev
     C.printError(err)
   end
   return err
+end):start()
 
+M.mouseRightClickEventTap = hs.eventtap.new({events.rightMouseDown}, function(event)
+  local status, err = pcall(function()
+    if (T.isBindKeyDown(event)) then
+      return true
+    end
+  end)
+  if (not status) then
+    C.printError(err)
+  end
+  return err
 end):start()
 
 M.mouseLeftDragEventTap = hs.eventtap.new({events.leftMouseDragged}, function(event)
@@ -33,6 +44,23 @@ M.mouseLeftDragEventTap = hs.eventtap.new({events.leftMouseDragged}, function(ev
     if (T.isBindKeyDown(event)) then
       C.printConsole("left drag: " .. tostring(event:getProperty(eventProperties["mouseEventDeltaX"])) .. ", " .. tostring(event:getProperty(eventProperties["mouseEventDeltaY"])))
       W.move(event:getProperty(eventProperties["mouseEventDeltaX"]), event:getProperty(eventProperties["mouseEventDeltaY"]), 0)
+      return true
+    end
+  end)
+  if (not status) then
+    C.printError(err)
+    return false
+  else
+    return err
+  end
+
+end):start()
+
+M.mouseRightDragEventTap = hs.eventtap.new({events.rightMouseDragged}, function(event)
+  local status, err = pcall(function()
+    if (T.isBindKeyDown(event)) then
+      C.printConsole("left drag: " .. tostring(event:getProperty(eventProperties["mouseEventDeltaX"])) .. ", " .. tostring(event:getProperty(eventProperties["mouseEventDeltaY"])))
+      W.resize(event:getProperty(eventProperties["mouseEventDeltaX"]), event:getProperty(eventProperties["mouseEventDeltaY"]))
       return true
     end
   end)
