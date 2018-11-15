@@ -2,10 +2,11 @@ local C = require "lib/console"
 
 local W = {}
 
-local resizeFactor = 0.07
+local keyboardResizeFactor = 0.07
 local scrollResizeFactor = 0.008
-local minimumWidthFactor = 2 * resizeFactor
-local minimumHeightFactor = 3 * resizeFactor
+local mouseResizeFactor = 0.001
+local minimumWidthFactor = 2 * keyboardResizeFactor
+local minimumHeightFactor = 3 * keyboardResizeFactor
 local defaultWidthFactor = 3.5 / 5
 local defaultWindowRatio = 10.0 / 16
 
@@ -98,7 +99,11 @@ function W.resizeMaxHeight()
 end
 
 function W.resize(deltaX, deltaY, duration)
-  W.resizeWithFactor(deltaX, deltaY, resizeFactor, duration)
+  W.resizeWithFactor(deltaX, deltaY, keyboardResizeFactor, duration)
+end
+
+function W.resizeWithMouse(deltaX, deltaY, duration)
+  W.resizeWithFactor(deltaX, deltaY, mouseResizeFactor, duration)
 end
 
 function W.resizeWithScroll(deltaX, deltaY, duration)
@@ -217,8 +222,8 @@ function W.resizeLarger()
     local screen = win:screen()
     local max = screen:frame()
 
-    local nextWidth = f.w + (max.w * resizeFactor)
-    local nextHeight = f.h + (max.h * resizeFactor)
+    local nextWidth = f.w + (max.w * keyboardResizeFactor)
+    local nextHeight = f.h + (max.h * keyboardResizeFactor)
 
     f.x = f.x
     f.y = f.y
@@ -241,8 +246,8 @@ function W.resizeSmaller()
     local screen = win:screen()
     local max = screen:frame()
 
-    local nextWidth = f.w - (max.w * resizeFactor)
-    local nextHeight = f.h - (max.h * resizeFactor)
+    local nextWidth = f.w - (max.w * keyboardResizeFactor)
+    local nextHeight = f.h - (max.h * keyboardResizeFactor)
 
     f.x = f.x
     f.y = f.y
@@ -330,8 +335,8 @@ function W.isCurrentWindowMax()
     C.printConsole("f: " .. tostring(f))
     C.printConsole("max: " .. tostring(max))
     if (f.x == max.x and f.y == max.y and
-        (f.w <= max.w and f.w >= max.w - (resizeFactor * max.w)) and
-        (f.h <= max.h and f.h >= max.h - (resizeFactor * max.h))
+        (f.w <= max.w and f.w >= max.w - (keyboardResizeFactor * max.w)) and
+        (f.h <= max.h and f.h >= max.h - (keyboardResizeFactor * max.h))
         ) then
       return true
     else

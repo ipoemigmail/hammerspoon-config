@@ -42,8 +42,12 @@ end):start()
 M.mouseLeftDragEventTap = hs.eventtap.new({events.leftMouseDragged}, function(event)
   local status, err = pcall(function()
     if (T.isBindKeyDown(event)) then
-      C.printConsole("left drag: " .. tostring(event:getProperty(eventProperties["mouseEventDeltaX"])) .. ", " .. tostring(event:getProperty(eventProperties["mouseEventDeltaY"])))
-      W.move(event:getProperty(eventProperties["mouseEventDeltaX"]), event:getProperty(eventProperties["mouseEventDeltaY"]), 0)
+      local deltaX = event:getProperty(eventProperties["mouseEventDeltaX"])
+      local deltaY = event:getProperty(eventProperties["mouseEventDeltaY"])
+      C.printConsole("left drag: " .. tostring(deltaX) .. ", " .. tostring(deltaY))
+      if (math.abs(deltaX) > 0 or math.abs(deltaY) > 0) then
+        W.move(deltaX, deltaY, 0)
+      end
       return true
     end
   end)
@@ -59,13 +63,13 @@ end):start()
 M.mouseRightDragEventTap = hs.eventtap.new({events.rightMouseDragged}, function(event)
   local status, err = pcall(function()
     if (T.isBindKeyDown(event)) then
-      C.printConsole("left drag: " .. tostring(event:getProperty(eventProperties["mouseEventDeltaX"])) .. ", " .. tostring(event:getProperty(eventProperties["mouseEventDeltaY"])))
-      W.resizeWithFactor(
-        event:getProperty(eventProperties["mouseEventDeltaX"]),
-        event:getProperty(eventProperties["mouseEventDeltaY"]),
-        0,
-        0)
-      return true
+      C.printConsole("left drag: " .. tostring(deltaX) .. ", " .. tostring(deltaY))
+      local deltaX = event:getProperty(eventProperties["mouseEventDeltaX"])
+      local deltaY = event:getProperty(eventProperties["mouseEventDeltaY"])
+      if (math.abs(deltaX) > 0 or math.abs(deltaY) > 0) then
+        W.resizeWithMouse(deltaX, deltaY, 0)
+        return true
+      end
     end
   end)
   if (not status) then
@@ -80,17 +84,18 @@ end):start()
 M.mouseScrollEventTap = hs.eventtap.new({events.scrollWheel}, function(event)
   local status, err = pcall(function()
     if (T.isBindKeyDown(event)) then
-      C.printConsole("mouse scroll: " .. tostring(event:getProperty(eventProperties["scrollWheelEventDeltaAxis2"])) .. ", " .. tostring(event:getProperty(eventProperties["scrollWheelEventDeltaAxis1"])))
-      W.resizeWithScroll(
-        event:getProperty(eventProperties["scrollWheelEventDeltaAxis2"]),
-        event:getProperty(eventProperties["scrollWheelEventDeltaAxis1"]),
-        --event:getProperty(eventProperties["scrollWheelEventFixedPtDeltaAxis2"]),
-        --event:getProperty(eventProperties["scrollWheelEventFixedPtDeltaAxis1"]),
-        --event:getProperty(eventProperties["scrollWheelEventPointDeltaAxis2"]),
-        --event:getProperty(eventProperties["scrollWheelEventPointDeltaAxis1"]),
-        0)
-      --W.locateCenter()
-      return true
+      C.printConsole("mouse scroll: " .. tostring(deltaX) .. ", " .. tostring(deltaY))
+      local deltaX = event:getProperty(eventProperties["scrollWheelEventDeltaAxis2"])
+      local deltaY = event:getProperty(eventProperties["scrollWheelEventDeltaAxis1"])
+      -- local deltaX = event:getProperty(eventProperties["scrollWheelEventFixedPtDeltaAxis2"])
+      -- local deltaY = event:getProperty(eventProperties["scrollWheelEventFixedPtDeltaAxis1"])
+      -- local deltaX = event:getProperty(eventProperties["scrollWheelEventPointDeltaAxis2"])
+      -- local deltaY = event:getProperty(eventProperties["scrollWheelEventPointDeltaAxis1"])
+      if (math.abs(deltaX) > 0 or math.abs(deltaY) > 0) then
+        W.resizeWithScroll(deltaX, deltaY, 0)
+        --W.locateCenter()
+        return true
+      end
     end
   end)
   if (not status) then
