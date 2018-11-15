@@ -3,7 +3,7 @@ local C = require "lib/console"
 local W = {}
 
 local resizeFactor = 0.07
-local mouseResizeFactor = 0.03
+local scrollResizeFactor = 0.008
 local minimumWidthFactor = 2 * resizeFactor
 local minimumHeightFactor = 3 * resizeFactor
 local defaultWidthFactor = 3.5 / 5
@@ -101,8 +101,8 @@ function W.resize(deltaX, deltaY, duration)
   W.resizeWithFactor(deltaX, deltaY, resizeFactor, duration)
 end
 
-function W.resizeWithMouse(deltaX, deltaY, duration)
-  W.resizeWithFactor(deltaX, deltaY, mouseResizeFactor, duration)
+function W.resizeWithScroll(deltaX, deltaY, duration)
+  W.resizeWithFactor(deltaX, deltaY, scrollResizeFactor, duration)
 end
 
 function W.resizeWithFactor(deltaX, deltaY, factor, duration)
@@ -114,6 +114,11 @@ function W.resizeWithFactor(deltaX, deltaY, factor, duration)
 
     local nextWidth = deltaX * factor* max.w + f.w
     local nextHeight = deltaY * factor * max.h + f.h
+
+    if (factor == 0) then
+      nextWidth = deltaX + f.w
+      nextHeight = deltaY+ f.h
+    end
 
     if (nextWidth < max.w * minimumWidthFactor) then nextWidth = max.w * minimumWidthFactor end
     if (nextWidth > max.w) then nextWidth = max.w end

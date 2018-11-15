@@ -60,9 +60,10 @@ M.mouseRightDragEventTap = hs.eventtap.new({events.rightMouseDragged}, function(
   local status, err = pcall(function()
     if (T.isBindKeyDown(event)) then
       C.printConsole("left drag: " .. tostring(event:getProperty(eventProperties["mouseEventDeltaX"])) .. ", " .. tostring(event:getProperty(eventProperties["mouseEventDeltaY"])))
-      W.resize(
+      W.resizeWithFactor(
         event:getProperty(eventProperties["mouseEventDeltaX"]),
         event:getProperty(eventProperties["mouseEventDeltaY"]),
+        0,
         0)
       return true
     end
@@ -80,7 +81,7 @@ M.mouseScrollEventTap = hs.eventtap.new({events.scrollWheel}, function(event)
   local status, err = pcall(function()
     if (T.isBindKeyDown(event)) then
       C.printConsole("mouse scroll: " .. tostring(event:getProperty(eventProperties["scrollWheelEventDeltaAxis2"])) .. ", " .. tostring(event:getProperty(eventProperties["scrollWheelEventDeltaAxis1"])))
-      W.resizeWithMouse(
+      W.resizeWithScroll(
         event:getProperty(eventProperties["scrollWheelEventDeltaAxis2"]),
         event:getProperty(eventProperties["scrollWheelEventDeltaAxis1"]),
         --event:getProperty(eventProperties["scrollWheelEventFixedPtDeltaAxis2"]),
