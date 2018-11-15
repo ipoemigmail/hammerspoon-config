@@ -2,6 +2,7 @@ local C = require "lib/console"
 
 local W = {}
 
+local minimumDelta = 3
 local keyboardResizeFactor = 0.07
 local scrollResizeFactor = 0.008
 local mouseResizeFactor = 0.001
@@ -110,29 +111,91 @@ function W.resizeWithScroll(deltaX, deltaY, duration)
   W.resizeWithFactor(deltaX, deltaY, scrollResizeFactor, duration)
 end
 
+function sign(x)
+  return (x < 0 and -1) or 1
+end
+
+--function W.resizeWithFactor(deltaX, deltaY, factor, duration)
+--  local status, err = pcall(function()
+--    if (deltaX == 0 and deltaY == 0) then return end
+--    local win = hs.window.focusedWindow()
+--    local f = win:frame()
+--    local screen = win:screen()
+--    local max = screen:frame()
+--
+--    local nextWidth = deltaX * factor * max.w + f.w
+--    local nextHeight = deltaY * factor * max.h + f.h
+--
+--    if ((not deltaX == 0) and math.abs(f.w - nextWidth) < minimumDelta) then
+--      nextWidth = f.w + sign(deltaX) * minimumDelta
+--    end
+--
+--    if ((not deltaY == 0) and math.abs(f.h - nextHeight) < minimumDelta) then
+--      nextHeight = f.h + sign(deltaY) * minimumDelta
+--    end
+--
+--    if (factor == nil) then
+--      nextWidth = deltaX + f.w
+--      nextHeight = deltaY + f.h
+--    end
+--
+--    C.printConsole("resize (" .. tostring(f.w) .. " -> " .. tostring(nextWidth) .. ", " .. tostring(f.h) .. " -> " .. tostring(nextHeight) .. ")")
+--
+--    --if (nextWidth < max.w * minimumWidthFactor) then nextWidth = max.w * minimumWidthFactor end
+--    --if (nextWidth > max.w) then nextWidth = max.w end
+--    --if (nextHeight < max.h * minimumHeightFactor) then nextHeight = max.w * minimumHeightFactor end
+--    --if (nextHeight > max.h) then nextHeight = max.h end
+--
+--    f.w = nextWidth
+--    f.h = nextHeight
+--    win:setFrame(f, duration)
+--  end)
+--  if (not status) then
+--    C.printError(err)
+--    return false
+--  else
+--    return err
+--  end
+--end
+
 function W.resizeWithFactor(deltaX, deltaY, factor, duration)
   local status, err = pcall(function()
+    if (deltaX == 0 and deltaY == 0) then return end
     local win = hs.window.focusedWindow()
     local f = win:frame()
+    C.printConsole("f: " .. tostring(f))
     local screen = win:screen()
     local max = screen:frame()
 
-    local nextWidth = deltaX * factor* max.w + f.w
+    local nextWidth = deltaX * factor * max.w + f.w
     local nextHeight = deltaY * factor * max.h + f.h
 
-    if (factor == 0) then
-      nextWidth = deltaX + f.w
-      nextHeight = deltaY+ f.h
+    if ((not deltaX == 0) and math.abs(f.w - nextWidth) < minimumDelta) then
+      nextWidth = f.w + sign(deltaX) * minimumDelta
     end
+
+    if ((not deltaY == 0) and math.abs(f.h - nextHeight) < minimumDelta) then
+      nextHeight = f.h + sign(deltaY) * minimumDelta
+    end
+
+    if (factor == nil) then
+      nextWidth = deltaX + f.w
+      nextHeight = deltaY + f.h
+    end
+
+    C.printConsole("resize before (" .. tostring(f.w) .. " -> " .. tostring(nextWidth) .. ", " .. tostring(f.h) .. " -> " .. tostring(nextHeight) .. ")")
 
     if (nextWidth < max.w * minimumWidthFactor) then nextWidth = max.w * minimumWidthFactor end
     if (nextWidth > max.w) then nextWidth = max.w end
-    if (nextHeight < max.w * minimumHeightFactor) then nextHeight = max.w * minimumHeightFactor end
-    if (nextHeight > max.w) then nextHeight = max.w end
+    if (nextHeight < max.h * minimumHeightFactor) then nextHeight = max.w * minimumHeightFactor end
+    if (nextHeight > max.h) then nextHeight = max.h end
 
     f.w = nextWidth
     f.h = nextHeight
-    win:setFrame(f, duration)
+    win:setFrame(f)
+
+    f = win:frame()
+    C.printConsole("resize after (" .. tostring(f.w) .. " -> " .. tostring(nextWidth) .. ", " .. tostring(f.h) .. " -> " .. tostring(nextHeight) .. ")")
   end)
   if (not status) then
     C.printError(err)
@@ -334,6 +397,7 @@ function W.isCurrentWindowMax()
 
     C.printConsole("f: " .. tostring(f))
     C.printConsole("max: " .. tostring(max))
+
     if (f.x == max.x and f.y == max.y and
         (f.w <= max.w and f.w >= max.w - (keyboardResizeFactor * max.w)) and
         (f.h <= max.h and f.h >= max.h - (keyboardResizeFactor * max.h))

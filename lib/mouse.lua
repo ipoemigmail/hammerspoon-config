@@ -63,9 +63,9 @@ end):start()
 M.mouseRightDragEventTap = hs.eventtap.new({events.rightMouseDragged}, function(event)
   local status, err = pcall(function()
     if (T.isBindKeyDown(event)) then
-      C.printConsole("left drag: " .. tostring(deltaX) .. ", " .. tostring(deltaY))
       local deltaX = event:getProperty(eventProperties["mouseEventDeltaX"])
       local deltaY = event:getProperty(eventProperties["mouseEventDeltaY"])
+      C.printConsole("left drag: " .. tostring(deltaX) .. ", " .. tostring(deltaY))
       if (math.abs(deltaX) > 0 or math.abs(deltaY) > 0) then
         W.resizeWithMouse(deltaX, deltaY, 0)
         return true
@@ -84,9 +84,9 @@ end):start()
 M.mouseScrollEventTap = hs.eventtap.new({events.scrollWheel}, function(event)
   local status, err = pcall(function()
     if (T.isBindKeyDown(event)) then
-      C.printConsole("mouse scroll: " .. tostring(deltaX) .. ", " .. tostring(deltaY))
       local deltaX = event:getProperty(eventProperties["scrollWheelEventDeltaAxis2"])
       local deltaY = event:getProperty(eventProperties["scrollWheelEventDeltaAxis1"])
+      C.printConsole("mouse scroll: " .. tostring(deltaX) .. ", " .. tostring(deltaY))
       -- local deltaX = event:getProperty(eventProperties["scrollWheelEventFixedPtDeltaAxis2"])
       -- local deltaY = event:getProperty(eventProperties["scrollWheelEventFixedPtDeltaAxis1"])
       -- local deltaX = event:getProperty(eventProperties["scrollWheelEventPointDeltaAxis2"])
