@@ -11,19 +11,26 @@ local minimumHeightFactor = 3 * keyboardResizeFactor
 local defaultWidthFactor = 3.5 / 5
 local defaultWindowRatio = 10.0 / 16
 
+local windowSizeMap = {}
+
 function W.resizeMax()
   W.resizeMaxWidth()
   W.resizeMaxHeight()
 end
 
 function W.toggleMax()
-  if (W.isCurrentWindowMax()) then
-    W.resizeDefault() 
-    W.locateCenter()
-  else
+  local win = hs.window.focusedWindow()
+  local oldFrame = windowSizeMap[win:id()]
+  C.printConsole("oldFrame: " .. tostring(oldFrame))
+  if (oldFrame == nil) then
+    windowSizeMap[win:id()] = win:frame()
     W.resizeMax()
     W.locateLeft()
     W.locateTop()
+  else
+    W.resize(oldFrame.w, oldFrame.h)
+    windowSizeMap[win:id()] = nil
+    W.locateCenter()
   end
 end
 
@@ -99,16 +106,32 @@ function W.resizeMaxHeight()
   end
 end
 
-function W.resize(deltaX, deltaY, duration)
-  W.resizeWithFactor(deltaX, deltaY, keyboardResizeFactor, duration)
+function W.resizeDelta(deltaX, deltaY, duration)
+  W.resizeDeltaWithFactor(deltaX, deltaY, keyboardResizeFactor, duration)
 end
 
 function W.resizeWithMouse(deltaX, deltaY, duration)
-  W.resizeWithFactor(deltaX, deltaY, mouseResizeFactor, duration)
+  W.resizeDeltaWithFactor(deltaX, deltaY, mouseResizeFactor, duration)
 end
 
 function W.resizeWithScroll(deltaX, deltaY, duration)
-  W.resizeWithFactor(deltaX, deltaY, scrollResizeFactor, duration)
+  W.resizeDeltaWithFactor(deltaX, deltaY, scrollResizeFactor, duration)
+end
+
+function W.resize(width, height, duration)
+  local status, err = pcall(function()
+    local win = hs.window.focusedWindow()
+    local f = win:frame()
+    f.w = width 
+    f.h = height
+    win:setFrame(f)
+  end)
+  if (not status) then
+    C.printError(err)
+    return false
+  else
+    return err
+  end
 end
 
 function sign(x)
@@ -158,7 +181,7 @@ end
 --  end
 --end
 
-function W.resizeWithFactor(deltaX, deltaY, factor, duration)
+function W.resizeDeltaWithFactor(deltaX, deltaY, factor, duration)
   local status, err = pcall(function()
     if (deltaX == 0 and deltaY == 0) then return end
     local win = hs.window.focusedWindow()

@@ -1,7 +1,7 @@
 local console = {}
 
 console.printConsole = function(msg)
-  --print(msg)
+  print(msg)
 end
 
 console.printError = function(err)
