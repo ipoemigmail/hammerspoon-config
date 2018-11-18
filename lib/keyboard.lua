@@ -72,6 +72,7 @@ K.keyDownEventTap = hs.eventtap.new({events.keyDown}, function(event)
         W.resizeHalfHeight()
         W.resizeMaxWidth()
         W.locateDown()
+        W.locateLeft()
         if (leftKeyDown) then
           W.resizeHalfWidth()
           C.printConsole("right + down")
