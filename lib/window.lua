@@ -22,7 +22,7 @@ function W.toggleMax()
   local win = hs.window.focusedWindow()
   local oldFrame = windowSizeMap[win:id()]
   C.printConsole("oldFrame: " .. tostring(oldFrame))
-  if (oldFrame == nil) then
+  if (oldFrame == nil or not W.isCurrentWindowMax()) then
     windowSizeMap[win:id()] = win:frame()
     W.resizeMax()
     W.locateLeft()
