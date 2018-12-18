@@ -272,7 +272,7 @@ function W.locateRight()
     local screen = win:screen()
     local max = screen:frame()
 
-    f.x = max.w - f.w
+    f.x = max.x + max.w - f.w
     win:setFrame(f)
   end)
   if (not status) then
@@ -290,7 +290,7 @@ function W.locateDown()
     local screen = win:screen()
     local max = screen:frame()
 
-    f.y = max.h - f.h
+    f.y = max.y + max.h - f.h
     win:setFrame(f)
   end)
   if (not status) then
