@@ -83,6 +83,18 @@ K.keyDownEventTap = hs.eventtap.new({events.keyDown}, function(event)
         end
         return true
       end
+    elseif (event:getKeyCode() == hs.keycodes.map["1"]) then
+      if (T.isBindKeyDown(event)) then
+        hs.eventtap.keyStrokes("정병준")
+      end
+    elseif (event:getKeyCode() == hs.keycodes.map["2"]) then
+      if (T.isBindKeyDown(event)) then
+        hs.eventtap.keyStrokes("ipoemi@naver.com")
+      end
+    elseif (event:getKeyCode() == hs.keycodes.map["3"]) then
+      if (T.isBindKeyDown(event)) then
+        hs.eventtap.keyStrokes("카카오")
+      end
     end
   end)
   if (not status) then
