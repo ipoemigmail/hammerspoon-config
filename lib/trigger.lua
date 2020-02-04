@@ -3,7 +3,7 @@ local C = require "lib/console"
 local trigger = {}
 
 bindKeys = function()
-  return {"cmd", "ctrl"}
+  return {"alt", "ctrl"}
 end
 
 trigger.bindKeys = bindKeys
