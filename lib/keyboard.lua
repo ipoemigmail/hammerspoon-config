@@ -12,13 +12,22 @@ local rightKeyDown = false
 local upKeyDown = false
 local downKeyDown = false
 
+local lastAction = ""
+
 K.keyDownEventTap = hs.eventtap.new({events.keyDown}, function(event)
   local status, err = pcall(function()
     C.printConsole("keyDown: " .. tostring(event:getKeyCode()))
+    C.printConsole("lastAction: " .. lastAction)
     if (event:getKeyCode() == hs.keycodes.map["left"]) then
       leftKeyDown = true
       if (T.isBindKeyDown(event)) then
-        W.resizeHalfWidth()
+        if lastAction == "left" then
+          W.resizeQuarterWidth()
+          lastAction = ""
+        else
+          W.resizeHalfWidth()
+          lastAction = "left"
+        end
         W.resizeMaxHeight()
         W.locateLeft()
         W.locateTop()
@@ -35,7 +44,13 @@ K.keyDownEventTap = hs.eventtap.new({events.keyDown}, function(event)
     elseif (event:getKeyCode() == hs.keycodes.map["right"]) then
       rightKeyDown = true
       if (T.isBindKeyDown(event)) then
-        W.resizeHalfWidth()
+        if lastAction == "right" then
+          W.resizeQuarterWidth()
+          lastAction = ""
+        else
+          W.resizeHalfWidth()
+          lastAction = "right"
+        end
         W.resizeMaxHeight()
         W.locateRight()
         W.locateTop()
@@ -52,7 +67,13 @@ K.keyDownEventTap = hs.eventtap.new({events.keyDown}, function(event)
     elseif (event:getKeyCode() == hs.keycodes.map["up"]) then
       upKeyDown = true
       if (T.isBindKeyDown(event)) then
-        W.resizeHalfHeight()
+        if lastAction == "up" then
+          W.resizeQuarterHeight()
+          lastAction = ""
+        else
+          W.resizeHalfHeight()
+          lastAction = "up"
+        end
         W.resizeMaxWidth()
         W.locateTop()
         W.locateLeft()
@@ -69,7 +90,13 @@ K.keyDownEventTap = hs.eventtap.new({events.keyDown}, function(event)
     elseif (event:getKeyCode() == hs.keycodes.map["down"]) then
       downKeyDown = true
       if (T.isBindKeyDown(event)) then
-        W.resizeHalfHeight()
+        if lastAction == "down" then
+          W.resizeQuarterHeight()
+          lastAction = ""
+        else
+          W.resizeHalfHeight()
+          lastAction = "down"
+        end
         W.resizeMaxWidth()
         W.locateDown()
         W.locateLeft()

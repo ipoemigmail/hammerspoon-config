@@ -2,7 +2,7 @@ local C = require "lib/console"
 
 local W = {}
 
-local minimumDelta = 3
+local minDelta = 3
 local keyboardResizeFactor = 0.07
 local scrollResizeFactor = 0.008
 local mouseResizeFactor = 0.001
@@ -34,6 +34,34 @@ function W.toggleMax()
   end
 end
 
+function W.isHalfWidth()
+  local win = hs.window.focusedWindow()
+  local f = win:frame()
+  local screen = win:screen()
+  local max = screen:frame()
+  local minErrorSize = max.w / 1000
+
+  return (f.w <= max.w / 2 + minErrorSize) and (f.w >= max.w / 2 - minErrorSize)
+end
+
+function W.resizeQuarterWidth()
+  local status, err = pcall(function()
+    local win = hs.window.focusedWindow()
+    local f = win:frame()
+    local screen = win:screen()
+    local max = screen:frame()
+
+    f.w = max.w / 4
+    win:setFrame(f)
+  end)
+  if (not status) then
+    C.printError(err)
+    return false
+  else
+    return err
+  end
+end
+
 function W.resizeHalfWidth()
   local status, err = pcall(function()
     local win = hs.window.focusedWindow()
@@ -60,6 +88,34 @@ function W.resizeMaxWidth()
     local max = screen:frame()
 
     f.w = max.w
+    win:setFrame(f)
+  end)
+  if (not status) then
+    C.printError(err)
+    return false
+  else
+    return err
+  end
+end
+
+function W.isHalfHeight()
+  local win = hs.window.focusedWindow()
+  local f = win:frame()
+  local screen = win:screen()
+  local max = screen:frame()
+  local minErrorSize = max.h / 1000
+
+  return (f.h <= max.h / 2 + minErrorSize) and (f.h >= max.h / 2 - minErrorSize)
+end
+
+function W.resizeQuarterHeight()
+  local status, err = pcall(function()
+    local win = hs.window.focusedWindow()
+    local f = win:frame()
+    local screen = win:screen()
+    local max = screen:frame()
+
+    f.h = max.h / 4
     win:setFrame(f)
   end)
   if (not status) then
@@ -149,12 +205,12 @@ end
 --    local nextWidth = deltaX * factor * max.w + f.w
 --    local nextHeight = deltaY * factor * max.h + f.h
 --
---    if ((not deltaX == 0) and math.abs(f.w - nextWidth) < minimumDelta) then
---      nextWidth = f.w + sign(deltaX) * minimumDelta
+--    if ((not deltaX == 0) and math.abs(f.w - nextWidth) < minDelta) then
+--      nextWidth = f.w + sign(deltaX) * minDelta
 --    end
 --
---    if ((not deltaY == 0) and math.abs(f.h - nextHeight) < minimumDelta) then
---      nextHeight = f.h + sign(deltaY) * minimumDelta
+--    if ((not deltaY == 0) and math.abs(f.h - nextHeight) < minDelta) then
+--      nextHeight = f.h + sign(deltaY) * minDelta
 --    end
 --
 --    if (factor == nil) then
@@ -193,12 +249,12 @@ function W.resizeDeltaWithFactor(deltaX, deltaY, factor, duration)
     local nextWidth = deltaX * factor * max.w + f.w
     local nextHeight = deltaY * factor * max.h + f.h
 
-    if ((not deltaX == 0) and math.abs(f.w - nextWidth) < minimumDelta) then
-      nextWidth = f.w + sign(deltaX) * minimumDelta
+    if ((not deltaX == 0) and math.abs(f.w - nextWidth) < minDelta) then
+      nextWidth = f.w + sign(deltaX) * minDelta
     end
 
-    if ((not deltaY == 0) and math.abs(f.h - nextHeight) < minimumDelta) then
-      nextHeight = f.h + sign(deltaY) * minimumDelta
+    if ((not deltaY == 0) and math.abs(f.h - nextHeight) < minDelta) then
+      nextHeight = f.h + sign(deltaY) * minDelta
     end
 
     if (factor == nil) then
