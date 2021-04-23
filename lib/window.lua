@@ -34,132 +34,122 @@ function W.toggleMax()
   end
 end
 
-function W.isHalfWidth()
+function W.isWidthRatio(ratio)
   local win = hs.window.focusedWindow()
   local f = win:frame()
   local screen = win:screen()
   local max = screen:frame()
   local minErrorSize = max.w / 1000
-
-  return (f.w <= max.w / 2 + minErrorSize) and (f.w >= max.w / 2 - minErrorSize)
+  return (f.w <= max.w * ratio + minErrorSize) and (f.w >= max.w * ratio - minErrorSize)
 end
 
-function W.resizeQuarterWidth()
-  local status, err = pcall(function()
-    local win = hs.window.focusedWindow()
-    local f = win:frame()
-    local screen = win:screen()
-    local max = screen:frame()
-
-    f.w = max.w / 4
-    win:setFrame(f)
-  end)
-  if (not status) then
-    C.printError(err)
-    return false
-  else
-    return err
-  end
-end
-
-function W.resizeHalfWidth()
-  local status, err = pcall(function()
-    local win = hs.window.focusedWindow()
-    local f = win:frame()
-    local screen = win:screen()
-    local max = screen:frame()
-
-    f.w = max.w / 2
-    win:setFrame(f)
-  end)
-  if (not status) then
-    C.printError(err)
-    return false
-  else
-    return err
-  end
-end
-
-function W.resizeMaxWidth()
-  local status, err = pcall(function()
-    local win = hs.window.focusedWindow()
-    local f = win:frame()
-    local screen = win:screen()
-    local max = screen:frame()
-
-    f.w = max.w
-    win:setFrame(f)
-  end)
-  if (not status) then
-    C.printError(err)
-    return false
-  else
-    return err
-  end
-end
-
-function W.isHalfHeight()
+function W.isHeightRatio(ratio)
   local win = hs.window.focusedWindow()
   local f = win:frame()
   local screen = win:screen()
   local max = screen:frame()
   local minErrorSize = max.h / 1000
+  return (f.h <= max.h * ratio + minErrorSize) and (f.h >= max.h * ratio - minErrorSize)
+end
 
-  return (f.h <= max.h / 2 + minErrorSize) and (f.h >= max.h / 2 - minErrorSize)
+function W.isQuarterWidth()
+  return W.isWidthRatio(1/4)
+end
+
+function W.isHalfWidth()
+  return W.isWidthRatio(1/2)
+end
+
+function W.isThreeQuartersWidth()
+  return W.isWidthRatio(3/4)
+end
+
+function W.isMaxWidth()
+  return W.isWidthRatio(1)
+end
+
+function W.isQuarterHeight()
+  return W.isHeightRatio(1/4)
+end
+
+function W.isHalfHeight()
+  return W.isHeightRatio(1/2)
+end
+
+function W.isThreeQuartersHeight()
+  return W.isHeightRatio(3/4)
+end
+
+function W.isMaxHeight()
+  return W.isHeightRatio(1)
+end
+
+function W.resizeWidthRatio(ratio)
+  local status, err = pcall(function()
+    local win = hs.window.focusedWindow()
+    local f = win:frame()
+    local screen = win:screen()
+    local max = screen:frame()
+
+    f.w = max.w * ratio
+    win:setFrame(f)
+  end)
+  if (not status) then
+    C.printError(err)
+    return false
+  else
+    return err
+  end
+end
+
+function W.resizeHeightRatio(ratio)
+  local status, err = pcall(function()
+    local win = hs.window.focusedWindow()
+    local f = win:frame()
+    local screen = win:screen()
+    local max = screen:frame()
+
+    f.h = max.h * ratio
+    win:setFrame(f)
+  end)
+  if (not status) then
+    C.printError(err)
+    return false
+  else
+    return err
+  end
+end
+
+function W.resizeQuarterWidth()
+  return W.resizeWidthRatio(1/4)
+end
+
+function W.resizeHalfWidth()
+  return W.resizeWidthRatio(1/2)
+end
+
+function W.resizeThreeQuartersWidth()
+  return W.resizeWidthRatio(3/4)
+end
+
+function W.resizeMaxWidth()
+  return W.resizeWidthRatio(1)
 end
 
 function W.resizeQuarterHeight()
-  local status, err = pcall(function()
-    local win = hs.window.focusedWindow()
-    local f = win:frame()
-    local screen = win:screen()
-    local max = screen:frame()
-
-    f.h = max.h / 4
-    win:setFrame(f)
-  end)
-  if (not status) then
-    C.printError(err)
-    return false
-  else
-    return err
-  end
+  return W.resizeHeightRatio(1/4)
 end
 
 function W.resizeHalfHeight()
-  local status, err = pcall(function()
-    local win = hs.window.focusedWindow()
-    local f = win:frame()
-    local screen = win:screen()
-    local max = screen:frame()
+  return W.resizeHeightRatio(1/2)
+end
 
-    f.h = max.h / 2
-    win:setFrame(f)
-  end)
-  if (not status) then
-    C.printError(err)
-    return false
-  else
-    return err
-  end
+function W.resizeThreeQuartersHeight()
+  return W.resizeHeightRatio(3/4)
 end
 
 function W.resizeMaxHeight()
-  local status, err = pcall(function()
-    local win = hs.window.focusedWindow()
-    local f = win:frame()
-    local screen = win:screen()
-    local max = screen:frame()
-
-    f.h = max.h
-    win:setFrame(f)
-  end)
-  if (not status) then
-    C.printError(err)
-    return false
-  else
-    return err
-  end
+  return W.resizeHeightRatio(1)
 end
 
 function W.resizeDelta(deltaX, deltaY, duration)
@@ -282,6 +272,42 @@ function W.resizeDeltaWithFactor(deltaX, deltaY, factor, duration)
   else
     return err
   end
+end
+
+function W.isTop()
+  local win = hs.window.focusedWindow()
+  local f = win:frame()
+  local screen = win:screen()
+  local max = screen:frame()
+
+  return f.y == max.y
+end
+
+function W.isBottom()
+  local win = hs.window.focusedWindow()
+  local f = win:frame()
+  local screen = win:screen()
+  local max = screen:frame()
+
+  return f.y == max.y + max.h - f.h
+end
+
+function W.isLeft()
+  local win = hs.window.focusedWindow()
+  local f = win:frame()
+  local screen = win:screen()
+  local max = screen:frame()
+
+  return f.x == max.x
+end
+
+function W.isRight()
+  local win = hs.window.focusedWindow()
+  local f = win:frame()
+  local screen = win:screen()
+  local max = screen:frame()
+
+  return f.x == max.x + max.w - f.w
 end
 
 
