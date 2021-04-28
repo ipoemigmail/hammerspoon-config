@@ -26,6 +26,7 @@ K.keyDownEventTap = hs.eventtap.new({events.keyDown}, function(event)
           else
             W.resizeHalfWidth()
           end
+        elseif W.isRight() and (W.isTop() or W.isBottom()) then
         else
           W.locateTop()
           W.resizeMaxHeight()
@@ -49,6 +50,7 @@ K.keyDownEventTap = hs.eventtap.new({events.keyDown}, function(event)
           else
             W.resizeHalfWidth()
           end
+        elseif W.isLeft() and (W.isTop() or W.isBottom()) then
         else
           W.locateTop()
           W.resizeMaxHeight()
@@ -72,6 +74,7 @@ K.keyDownEventTap = hs.eventtap.new({events.keyDown}, function(event)
           else
             W.resizeHalfHeight()
           end
+        elseif W.isBottom() and (W.isLeft() or W.isRight()) then
         else
           W.locateLeft()
           W.resizeMaxWidth()
@@ -95,6 +98,7 @@ K.keyDownEventTap = hs.eventtap.new({events.keyDown}, function(event)
           else
             W.resizeHalfHeight()
           end
+        elseif W.isTop() and (W.isLeft() or W.isRight()) then
         else
           W.locateLeft()
           W.resizeMaxWidth()
