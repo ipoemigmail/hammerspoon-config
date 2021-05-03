@@ -12,6 +12,8 @@ local defaultWidthFactor = 1.3 / 2
 local defaultWindowRatio = 10.0 / 16
 
 local windowSizeMap = {}
+local windowQuarterWidth = {}
+local windowQuarterHeight = {}
 
 function W.resizeMax()
   W.resizeMaxWidth()
@@ -24,13 +26,12 @@ function W.toggleMax()
   C.printConsole("oldFrame: " .. tostring(oldFrame))
   if (oldFrame == nil or not W.isCurrentWindowMax()) then
     windowSizeMap[win:id()] = win:frame()
-    W.resizeMax()
     W.locateLeft()
     W.locateTop()
+    W.resizeMax()
   else
-    W.resize(oldFrame.w, oldFrame.h)
+    win:setFrame(oldFrame)
     windowSizeMap[win:id()] = nil
-    W.locateCenter()
   end
 end
 
@@ -53,7 +54,9 @@ function W.isHeightRatio(ratio)
 end
 
 function W.isQuarterWidth()
-  return W.isWidthRatio(1/4)
+  local win = hs.window.focusedWindow()
+  local f = win:frame()
+  return W.isWidthRatio(1/4) or (windowQuarterWidth[win:id()] == f.w)
 end
 
 function W.isHalfWidth()
@@ -69,7 +72,9 @@ function W.isMaxWidth()
 end
 
 function W.isQuarterHeight()
-  return W.isHeightRatio(1/4)
+  local win = hs.window.focusedWindow()
+  local f = win:frame()
+  return W.isHeightRatio(1/4) or (windowQuarterHeight[win:id()] == f.h)
 end
 
 function W.isHalfHeight()
@@ -92,7 +97,7 @@ function W.resizeWidthRatio(ratio)
     local max = screen:frame()
 
     f.w = max.w * ratio
-    win:setFrame(f)
+    win:setFrame(f, 0)
   end)
   if (not status) then
     C.printError(err)
@@ -110,7 +115,7 @@ function W.resizeHeightRatio(ratio)
     local max = screen:frame()
 
     f.h = max.h * ratio
-    win:setFrame(f)
+    win:setFrame(f, 0)
   end)
   if (not status) then
     C.printError(err)
@@ -121,7 +126,12 @@ function W.resizeHeightRatio(ratio)
 end
 
 function W.resizeQuarterWidth()
-  return W.resizeWidthRatio(1/4)
+  local result = W.resizeWidthRatio(1/4)
+  local win = hs.window.focusedWindow()
+  local f = win:frame()
+  C.printConsole("ff.w:" .. tostring(f.w))
+  windowQuarterWidth[win:id()] = f.w
+  return result
 end
 
 function W.resizeHalfWidth()
@@ -137,7 +147,12 @@ function W.resizeMaxWidth()
 end
 
 function W.resizeQuarterHeight()
-  return W.resizeHeightRatio(1/4)
+  local result = W.resizeHeightRatio(1/4)
+  local win = hs.window.focusedWindow()
+  local f = win:frame()
+  C.printConsole("ff.h:" .. tostring(f.h))
+  windowQuarterHeight[win:id()] = f.h
+  return result
 end
 
 function W.resizeHalfHeight()
@@ -319,7 +334,7 @@ function W.locateLeft()
     local max = screen:frame()
 
     f.x = max.x
-    win:setFrame(f)
+    win:setFrame(f, 0)
   end)
   if (not status) then
     C.printError(err)
@@ -337,7 +352,7 @@ function W.locateTop()
     local max = screen:frame()
 
     f.y = max.y
-    win:setFrame(f)
+    win:setFrame(f, 0)
   end)
   if (not status) then
     C.printError(err)
@@ -355,7 +370,7 @@ function W.locateRight()
     local max = screen:frame()
 
     f.x = max.x + max.w - f.w
-    win:setFrame(f)
+    win:setFrame(f, 0)
   end)
   if (not status) then
     C.printError(err)
@@ -373,7 +388,7 @@ function W.locateDown()
     local max = screen:frame()
 
     f.y = max.y + max.h - f.h
-    win:setFrame(f)
+    win:setFrame(f, 0)
   end)
   if (not status) then
     C.printError(err)

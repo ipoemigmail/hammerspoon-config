@@ -9,7 +9,11 @@ local eventProperties = hs.eventtap.event.properties
 
 K.keyDownEventTap = hs.eventtap.new({events.keyDown}, function(event)
   local status, err = pcall(function()
+    local win = hs.window.focusedWindow()
+    local f = win:frame()
     C.printConsole("keyDown: " .. tostring(event:getKeyCode()))
+    C.printConsole("f.w:" .. tostring(f.w))
+    C.printConsole("f.h:" .. tostring(f.h))
     if (event:getKeyCode() == hs.keycodes.map["left"]) then
       if (T.isBindKeyDown(event)) then
         if W.isLeft() and (W.isTop() or W.isBottom()) then
@@ -45,6 +49,7 @@ K.keyDownEventTap = hs.eventtap.new({events.keyDown}, function(event)
             elseif W.isHalfWidth() then
               W.resizeQuarterWidth()
             elseif W.isQuarterWidth() then
+              W.locateLeft()
               W.resizeMaxWidth()
             end
           else
@@ -61,7 +66,7 @@ K.keyDownEventTap = hs.eventtap.new({events.keyDown}, function(event)
     elseif (event:getKeyCode() == hs.keycodes.map["up"]) then
       if (T.isBindKeyDown(event)) then
         if W.isTop() and (W.isLeft() or W.isRight()) then
-          if W.isMaxHeight() or W.isThreeQuartersHeight() or W.isHalfHeight() or W.isQuarterHeight() then
+          if W.isMaxWidth() or W.isThreeQuartersWidth() or W.isHalfWidth() or W.isQuarterWidth() then
             if W.isMaxHeight() then
               W.resizeThreeQuartersHeight()
             elseif W.isThreeQuartersHeight() then
@@ -84,8 +89,13 @@ K.keyDownEventTap = hs.eventtap.new({events.keyDown}, function(event)
       end
     elseif (event:getKeyCode() == hs.keycodes.map["down"]) then
       if (T.isBindKeyDown(event)) then
+        C.printConsole("W.isBottom():" .. tostring(W.isBottom()))
+        C.printConsole("W.isLeft():" .. tostring(W.isLeft()))
+        C.printConsole("W.isRight():" .. tostring(W.isRight()))
+        C.printConsole("W.isMaxHeight():" .. tostring(W.isRight()))
+        C.printConsole("W.isQuarterHeight():" .. tostring(W.isQuarterHeight()))
         if W.isBottom() and (W.isLeft() or W.isRight()) then
-          if W.isMaxHeight() or W.isThreeQuartersHeight() or W.isHalfHeight() or W.isQuarterHeight() then
+          if W.isMaxWidth() or W.isThreeQuartersWidth() or W.isHalfWidth() or W.isQuarterWidth() then
             if W.isMaxHeight() then
               W.resizeThreeQuartersHeight()
             elseif W.isThreeQuartersHeight() then
@@ -93,6 +103,7 @@ K.keyDownEventTap = hs.eventtap.new({events.keyDown}, function(event)
             elseif W.isHalfHeight() then
               W.resizeQuarterHeight()
             elseif W.isQuarterHeight() then
+              W.locateTop()
               W.resizeMaxHeight()
             end
           else
