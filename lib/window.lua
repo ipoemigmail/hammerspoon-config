@@ -30,7 +30,7 @@ function W.toggleMax()
     W.locateTop()
     W.resizeMax()
   else
-    win:setFrame(oldFrame)
+    win:setFrame(oldFrame, 0)
     windowSizeMap[win:id()] = nil
   end
 end
