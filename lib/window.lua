@@ -40,7 +40,7 @@ function W.isWidthRatio(ratio)
   local f = win:frame()
   local screen = win:screen()
   local max = screen:frame()
-  local minErrorSize = max.w / 1000
+  local minErrorSize = max.w / 100
   return (f.w <= max.w * ratio + minErrorSize) and (f.w >= max.w * ratio - minErrorSize)
 end
 
@@ -49,7 +49,7 @@ function W.isHeightRatio(ratio)
   local f = win:frame()
   local screen = win:screen()
   local max = screen:frame()
-  local minErrorSize = max.h / 1000
+  local minErrorSize = max.h / 100
   return (f.h <= max.h * ratio + minErrorSize) and (f.h >= max.h * ratio - minErrorSize)
 end
 
