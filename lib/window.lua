@@ -8,8 +8,8 @@ local scrollResizeFactor = 0.008
 local mouseResizeFactor = 0.001
 local minimumWidthFactor = 2 * keyboardResizeFactor
 local minimumHeightFactor = 3 * keyboardResizeFactor
-local defaultWidthFactor = 1.3 / 2
-local defaultWindowRatio = 10.0 / 16
+local defaultWidthFactor = 1.2 / 2
+local defaultWindowRatio = 11.0 / 16
 
 local windowSizeMap = {}
 local windowQuarterWidth = {}
