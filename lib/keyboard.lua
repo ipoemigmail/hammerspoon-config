@@ -7,6 +7,15 @@ local K = {}
 local events = hs.eventtap.event.types
 local eventProperties = hs.eventtap.event.properties
 
+hs.hotkey.bind(T.bindKeys(), "[", function()
+  W.moveToPrevSpace()
+end)
+
+hs.hotkey.bind(T.bindKeys(), "]", function()
+  W.moveToNextSpace()
+end)
+
+
 K.keyDownEventTap = hs.eventtap.new({events.keyDown}, function(event)
   local status, err = pcall(function()
     local win = hs.window.focusedWindow()

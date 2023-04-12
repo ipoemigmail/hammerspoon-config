@@ -536,4 +536,48 @@ function W.isCurrentWindowMax()
 
 end
 
+function W.moveToPrevSpace()
+  local win = hs.window.focusedWindow()
+  local curScreen = win:screen()
+  local curSpace = hs.spaces.activeSpaceOnScreen(curScreen)
+  local allScreens = hs.screen.allScreens()
+  local allSpaces = {}
+  local curIdx = -1
+  for _, screen in ipairs(allScreens) do
+    spaces = hs.spaces.spacesForScreen(screen)
+    for _, space in ipairs(spaces) do
+      table.insert(allSpaces, space)
+    end
+  end
+  for i, _ in ipairs(allSpaces) do
+    if allSpaces[i] == curSpace then
+      curIdx = i
+    end
+  end
+  hs.spaces.moveWindowToSpace(win, allSpaces[math.max(1, curIdx - 1)], true)
+  win:focus()
+end
+
+function W.moveToNextSpace()
+  local win = hs.window.focusedWindow()
+  local curScreen = win:screen()
+  local curSpace = hs.spaces.activeSpaceOnScreen(curScreen)
+  local allScreens = hs.screen.allScreens()
+  local allSpaces = {}
+  local curIdx = -1
+  for _, screen in ipairs(allScreens) do
+    spaces = hs.spaces.spacesForScreen(screen)
+    for _, space in ipairs(spaces) do
+      table.insert(allSpaces, space)
+    end
+  end
+  for i, _ in ipairs(allSpaces) do
+    if allSpaces[i] == curSpace then
+      curIdx = i
+    end
+  end
+  hs.spaces.moveWindowToSpace(win, allSpaces[math.min(#allSpaces, curIdx + 1)], true)
+  win:focus()
+end
+
 return W
