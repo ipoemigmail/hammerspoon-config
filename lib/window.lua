@@ -568,7 +568,9 @@ function W.moveToNextSpace()
   for _, screen in ipairs(allScreens) do
     spaces = hs.spaces.spacesForScreen(screen)
     for _, space in ipairs(spaces) do
-      table.insert(allSpaces, space)
+      if hs.spaces.spaceType(space) ~= "fullscreen" then
+          table.insert(allSpaces, space)
+      end
     end
   end
   for i, _ in ipairs(allSpaces) do
