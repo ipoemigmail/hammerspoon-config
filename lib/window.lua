@@ -554,8 +554,12 @@ function W.moveToPrevSpace()
       curIdx = i
     end
   end
-  hs.spaces.moveWindowToSpace(win, allSpaces[math.max(1, curIdx - 1)], true)
-  win:focus()
+  if (curIdx - 1 > 0) then
+    hs.spaces.moveWindowToSpace(win, allSpaces[curIdx - 1], true)
+    win:focus()
+    W.move(-win:screen():frame().w, 0, 0)
+    win:centerOnScreen(nil, nil, 0)
+  end
 end
 
 function W.moveToNextSpace()
@@ -578,8 +582,13 @@ function W.moveToNextSpace()
       curIdx = i
     end
   end
-  hs.spaces.moveWindowToSpace(win, allSpaces[math.min(#allSpaces, curIdx + 1)], true)
-  win:focus()
+  
+  if (curIdx + 1 <= #allSpaces) then
+    hs.spaces.moveWindowToSpace(win, allSpaces[curIdx + 1], true)
+    win:focus()
+    W.move(win:screen():frame().w, 0, 0)
+    win:centerOnScreen(nil, nil, 0)
+  end
 end
 
 return W
