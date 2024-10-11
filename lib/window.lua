@@ -537,57 +537,69 @@ function W.isCurrentWindowMax()
 end
 
 function W.moveToPrevSpace()
-  local win = hs.window.focusedWindow()
-  local curScreen = win:screen()
-  local curSpace = hs.spaces.activeSpaceOnScreen(curScreen)
-  local allScreens = hs.screen.allScreens()
-  local allSpaces = {}
-  local curIdx = -1
-  for _, screen in ipairs(allScreens) do
-    spaces = hs.spaces.spacesForScreen(screen)
-    for _, space in ipairs(spaces) do
-      table.insert(allSpaces, space)
-    end
-  end
-  for i, _ in ipairs(allSpaces) do
-    if allSpaces[i] == curSpace then
-      curIdx = i
-    end
-  end
-  if (curIdx - 1 > 0) then
-    hs.spaces.moveWindowToSpace(win, allSpaces[curIdx - 1], true)
-    win:focus()
-    W.move(-win:screen():frame().w, 0, 0)
-    win:centerOnScreen(nil, nil, 0)
-  end
+  moveWindowOneSpace('left', true)
 end
 
 function W.moveToNextSpace()
+  moveWindowOneSpace('right', true)
+end
+
+local hsee, hst = hs.eventtap.event,hs.timer
+local spaces = require "hs.spaces"
+
+
+function flashScreen(screen)
+  local flash=hs.canvas.new(screen:fullFrame()):appendElements({
+  action = "fill",
+  fillColor = { alpha = 0.35, red=1},
+  type = "rectangle"})
+  flash:show()
+  hs.timer.doAfter(.25, function () flash:delete() end)
+end 
+
+function switchSpace(skip,dir)
+  for i=1,skip do
+     hs.eventtap.keyStroke({"ctrl","fn"},dir,0) -- "fn" is a bugfix!
+  end 
+end
+
+function moveWindowOneSpace(dir,switch)
   local win = hs.window.focusedWindow()
-  local curScreen = win:screen()
-  local curSpace = hs.spaces.activeSpaceOnScreen(curScreen)
-  local allScreens = hs.screen.allScreens()
-  local allSpaces = {}
-  local curIdx = -1
-  for _, screen in ipairs(allScreens) do
-    spaces = hs.spaces.spacesForScreen(screen)
-    for _, space in ipairs(spaces) do
-      if hs.spaces.spaceType(space) ~= "fullscreen" then
-          table.insert(allSpaces, space)
-      end
-    end
+  if not win then return end
+  local screen=win:screen()
+  local uuid=screen:getUUID()
+  local userSpaces=nil
+  for k,v in pairs(spaces.allSpaces()) do
+     userSpaces=v
+     if k==uuid then break end
   end
-  for i, _ in ipairs(allSpaces) do
-    if allSpaces[i] == curSpace then
-      curIdx = i
-    end
+  if not userSpaces then return end
+
+  for i, spc in ipairs(userSpaces) do
+     if spaces.spaceType(spc)~="user" then -- skippable space
+  table.remove(userSpaces, i)
+     end
   end
-  
-  if (curIdx + 1 <= #allSpaces) then
-    hs.spaces.moveWindowToSpace(win, allSpaces[curIdx + 1], true)
-    win:focus()
-    W.move(win:screen():frame().w, 0, 0)
-    win:centerOnScreen(nil, nil, 0)
+  if not userSpaces then return end
+
+  local initialSpace = spaces.windowSpaces(win)
+  if not initialSpace then return else initialSpace=initialSpace[1] end
+  local currentCursor = hs.mouse.getRelativePosition()
+
+  if (dir == "right" and initialSpace == userSpaces[#userSpaces]) or
+     (dir == "left" and initialSpace == userSpaces[1]) then
+     flashScreen(screen)   -- End of Valid Spaces
+  else
+     local zoomPoint = hs.geometry(win:zoomButtonRect()) 
+     local safePoint = zoomPoint:move({-1,-1}).topleft
+     hsee.newMouseEvent(hsee.types.leftMouseDown, safePoint):post()
+     switchSpace(1, dir)
+     hst.waitUntil(
+  function () return spaces.windowSpaces(win)[1]~=initialSpace end,
+  function ()
+     hsee.newMouseEvent(hsee.types.leftMouseUp, safePoint):post()
+     hs.mouse.setRelativePosition(currentCursor)
+     end, 0.05)
   end
 end
 
