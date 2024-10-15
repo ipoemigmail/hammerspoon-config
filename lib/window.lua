@@ -56,15 +56,15 @@ end
 function W.isQuarterWidth()
   local win = hs.window.focusedWindow()
   local f = win:frame()
-  return W.isWidthRatio(1/4) or (windowQuarterWidth[win:id()] == f.w)
+  return W.isWidthRatio(1 / 4) or (windowQuarterWidth[win:id()] == f.w)
 end
 
 function W.isHalfWidth()
-  return W.isWidthRatio(1/2)
+  return W.isWidthRatio(1 / 2)
 end
 
 function W.isThreeQuartersWidth()
-  return W.isWidthRatio(3/4)
+  return W.isWidthRatio(3 / 4)
 end
 
 function W.isMaxWidth()
@@ -74,15 +74,15 @@ end
 function W.isQuarterHeight()
   local win = hs.window.focusedWindow()
   local f = win:frame()
-  return W.isHeightRatio(1/4) or (windowQuarterHeight[win:id()] == f.h)
+  return W.isHeightRatio(1 / 4) or (windowQuarterHeight[win:id()] == f.h)
 end
 
 function W.isHalfHeight()
-  return W.isHeightRatio(1/2)
+  return W.isHeightRatio(1 / 2)
 end
 
 function W.isThreeQuartersHeight()
-  return W.isHeightRatio(3/4)
+  return W.isHeightRatio(3 / 4)
 end
 
 function W.isMaxHeight()
@@ -126,7 +126,7 @@ function W.resizeHeightRatio(ratio)
 end
 
 function W.resizeQuarterWidth()
-  local result = W.resizeWidthRatio(1/4)
+  local result = W.resizeWidthRatio(1 / 4)
   local win = hs.window.focusedWindow()
   local f = win:frame()
   C.printConsole("ff.w:" .. tostring(f.w))
@@ -135,11 +135,11 @@ function W.resizeQuarterWidth()
 end
 
 function W.resizeHalfWidth()
-  return W.resizeWidthRatio(1/2)
+  return W.resizeWidthRatio(1 / 2)
 end
 
 function W.resizeThreeQuartersWidth()
-  return W.resizeWidthRatio(3/4)
+  return W.resizeWidthRatio(3 / 4)
 end
 
 function W.resizeMaxWidth()
@@ -147,7 +147,7 @@ function W.resizeMaxWidth()
 end
 
 function W.resizeQuarterHeight()
-  local result = W.resizeHeightRatio(1/4)
+  local result = W.resizeHeightRatio(1 / 4)
   local win = hs.window.focusedWindow()
   local f = win:frame()
   C.printConsole("ff.h:" .. tostring(f.h))
@@ -156,11 +156,11 @@ function W.resizeQuarterHeight()
 end
 
 function W.resizeHalfHeight()
-  return W.resizeHeightRatio(1/2)
+  return W.resizeHeightRatio(1 / 2)
 end
 
 function W.resizeThreeQuartersHeight()
-  return W.resizeHeightRatio(3/4)
+  return W.resizeHeightRatio(3 / 4)
 end
 
 function W.resizeMaxHeight()
@@ -183,7 +183,7 @@ function W.resize(width, height, duration)
   local status, err = pcall(function()
     local win = hs.window.focusedWindow()
     local f = win:frame()
-    f.w = width 
+    f.w = width
     f.h = height
     win:setFrame(f)
   end)
@@ -267,7 +267,8 @@ function W.resizeDeltaWithFactor(deltaX, deltaY, factor, duration)
       nextHeight = deltaY + f.h
     end
 
-    C.printConsole("resize before (" .. tostring(f.w) .. " -> " .. tostring(nextWidth) .. ", " .. tostring(f.h) .. " -> " .. tostring(nextHeight) .. ")")
+    C.printConsole("resize before (" ..
+      tostring(f.w) .. " -> " .. tostring(nextWidth) .. ", " .. tostring(f.h) .. " -> " .. tostring(nextHeight) .. ")")
 
     if (nextWidth < max.w * minimumWidthFactor) then nextWidth = max.w * minimumWidthFactor end
     if (nextWidth > max.w) then nextWidth = max.w end
@@ -279,7 +280,8 @@ function W.resizeDeltaWithFactor(deltaX, deltaY, factor, duration)
     win:setFrame(f)
 
     f = win:frame()
-    C.printConsole("resize after (" .. tostring(f.w) .. " -> " .. tostring(nextWidth) .. ", " .. tostring(f.h) .. " -> " .. tostring(nextHeight) .. ")")
+    C.printConsole("resize after (" ..
+      tostring(f.w) .. " -> " .. tostring(nextWidth) .. ", " .. tostring(f.h) .. " -> " .. tostring(nextHeight) .. ")")
   end)
   if (not status) then
     C.printError(err)
@@ -324,7 +326,6 @@ function W.isRight()
 
   return f.x == max.x + max.w - f.w
 end
-
 
 function W.locateLeft()
   local status, err = pcall(function()
@@ -519,8 +520,8 @@ function W.isCurrentWindowMax()
     C.printConsole("max: " .. tostring(max))
 
     if (f.x == max.x and f.y == max.y and
-        (f.w <= max.w and f.w >= max.w - (keyboardResizeFactor * max.w)) and
-        (f.h <= max.h and f.h >= max.h - (keyboardResizeFactor * max.h))
+          (f.w <= max.w and f.w >= max.w - (keyboardResizeFactor * max.w)) and
+          (f.h <= max.h and f.h >= max.h - (keyboardResizeFactor * max.h))
         ) then
       return true
     else
@@ -533,73 +534,127 @@ function W.isCurrentWindowMax()
   else
     return err
   end
-
 end
 
 function W.moveToPrevSpace()
-  moveWindowOneSpace('left', true)
+  local win = hs.window.focusedWindow()
+  local curScreen = win:screen()
+  local curScreenId = curScreen:getUUID()
+  local curSpace = hs.spaces.activeSpaceOnScreen(curScreen)
+  local allSpaces = {}
+  for k1, v1 in pairs(hs.spaces.allSpaces()) do
+    for _, v2 in pairs(v1) do
+      table.insert(allSpaces, { k1, v2 })
+    end
+  end
+  local found = -1
+  for i, v in pairs(allSpaces) do
+    if v[1] == curScreenId and v[2] == curSpace then
+      found = i
+      break
+    end
+  end
+  if found == -1 or found - 1 < 1 then
+    return
+  end
+  if allSpaces[found - 1][1] == curScreenId then
+    MoveWindowOneSpace('left', true)
+  end
+  if allSpaces[found - 1][1] ~= curScreenId then
+    local max = curScreen:frame()
+    W.move(-max.w, 0, 0)
+    W.locateCenter()
+  end
 end
 
 function W.moveToNextSpace()
-  moveWindowOneSpace('right', true)
+  local win = hs.window.focusedWindow()
+  local curScreen = win:screen()
+  local curScreenId = curScreen:getUUID()
+  local curSpace = hs.spaces.activeSpaceOnScreen(curScreen)
+  local allSpaces = {}
+  for k1, v1 in pairs(hs.spaces.allSpaces()) do
+    for _, v2 in pairs(v1) do
+      table.insert(allSpaces, { k1, v2 })
+    end
+  end
+  local found = -1
+  for i, v in pairs(allSpaces) do
+    if v[1] == curScreenId and v[2] == curSpace then
+      found = i
+      break
+    end
+  end
+  if found == -1 or found + 1 > #allSpaces then
+    return
+  end
+  if allSpaces[found + 1][1] == curScreenId then
+    MoveWindowOneSpace('right', true)
+  end
+  if allSpaces[found + 1][1] ~= curScreenId then
+    local max = curScreen:frame()
+    W.move(max.w, 0, 0)
+    W.locateCenter()
+  end
 end
 
-local hsee, hst = hs.eventtap.event,hs.timer
+local hsee, hst = hs.eventtap.event, hs.timer
 local spaces = require "hs.spaces"
 
 
-function flashScreen(screen)
-  local flash=hs.canvas.new(screen:fullFrame()):appendElements({
-  action = "fill",
-  fillColor = { alpha = 0.35, red=1},
-  type = "rectangle"})
+function FlashScreen(screen)
+  local flash = hs.canvas.new(screen:fullFrame()):appendElements({
+    action = "fill",
+    fillColor = { alpha = 0.35, red = 1 },
+    type = "rectangle"
+  })
   flash:show()
-  hs.timer.doAfter(.25, function () flash:delete() end)
-end 
-
-function switchSpace(skip,dir)
-  for i=1,skip do
-     hs.eventtap.keyStroke({"ctrl","fn"},dir,0) -- "fn" is a bugfix!
-  end 
+  hs.timer.doAfter(.25, function() flash:delete() end)
 end
 
-function moveWindowOneSpace(dir,switch)
+function SwitchSpace(skip, dir)
+  for i = 1, skip do
+    hs.eventtap.keyStroke({ "ctrl", "fn" }, dir, 0) -- "fn" is a bugfix!
+  end
+end
+
+function MoveWindowOneSpace(dir, switch)
   local win = hs.window.focusedWindow()
   if not win then return end
-  local screen=win:screen()
-  local uuid=screen:getUUID()
-  local userSpaces=nil
-  for k,v in pairs(spaces.allSpaces()) do
-     userSpaces=v
-     if k==uuid then break end
+  local screen = win:screen()
+  local uuid = screen:getUUID()
+  local userSpaces = nil
+  for k, v in pairs(spaces.allSpaces()) do
+    userSpaces = v
+    if k == uuid then break end
   end
   if not userSpaces then return end
 
   for i, spc in ipairs(userSpaces) do
-     if spaces.spaceType(spc)~="user" then -- skippable space
-  table.remove(userSpaces, i)
-     end
+    if spaces.spaceType(spc) ~= "user" then -- skippable space
+      table.remove(userSpaces, i)
+    end
   end
   if not userSpaces then return end
 
   local initialSpace = spaces.windowSpaces(win)
-  if not initialSpace then return else initialSpace=initialSpace[1] end
+  if not initialSpace then return else initialSpace = initialSpace[1] end
   local currentCursor = hs.mouse.getRelativePosition()
 
   if (dir == "right" and initialSpace == userSpaces[#userSpaces]) or
-     (dir == "left" and initialSpace == userSpaces[1]) then
-     flashScreen(screen)   -- End of Valid Spaces
+      (dir == "left" and initialSpace == userSpaces[1]) then
+    FlashScreen(screen) -- End of Valid Spaces
   else
-     local zoomPoint = hs.geometry(win:zoomButtonRect()) 
-     local safePoint = zoomPoint:move({-1,-1}).topleft
-     hsee.newMouseEvent(hsee.types.leftMouseDown, safePoint):post()
-     switchSpace(1, dir)
-     hst.waitUntil(
-  function () return spaces.windowSpaces(win)[1]~=initialSpace end,
-  function ()
-     hsee.newMouseEvent(hsee.types.leftMouseUp, safePoint):post()
-     hs.mouse.setRelativePosition(currentCursor)
-     end, 0.05)
+    local zoomPoint = hs.geometry(win:zoomButtonRect())
+    local safePoint = zoomPoint:move({ -1, -1 }).topleft
+    hsee.newMouseEvent(hsee.types.leftMouseDown, safePoint):post()
+    SwitchSpace(1, dir)
+    hst.waitUntil(
+      function() return spaces.windowSpaces(win)[1] ~= initialSpace end,
+      function()
+        hsee.newMouseEvent(hsee.types.leftMouseUp, safePoint):post()
+        hs.mouse.setRelativePosition(currentCursor)
+      end, 0.05)
   end
 end
 
