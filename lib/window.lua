@@ -541,26 +541,29 @@ function W.moveToPrevSpace()
   local curScreen = win:screen()
   local curScreenId = curScreen:getUUID()
   local curSpace = hs.spaces.activeSpaceOnScreen(curScreen)
-  local allSpaces = {}
-  for k1, v1 in pairs(hs.spaces.allSpaces()) do
+  local allSpaces = hs.spaces.allSpaces()
+  local allSpacePairs = {}
+  for k1, v1 in pairs(allSpaces) do
     for _, v2 in pairs(v1) do
-      table.insert(allSpaces, { k1, v2 })
+      table.insert(allSpacePairs, { k1, v2 })
     end
   end
   local found = -1
-  for i, v in pairs(allSpaces) do
+  for i, v in pairs(allSpacePairs) do
     if v[1] == curScreenId and v[2] == curSpace then
       found = i
       break
     end
   end
-  if found == -1 or found - 1 < 1 then
+  if found == -1 then
     return
   end
-  if allSpaces[found - 1][1] == curScreenId then
+  
+  local prevIndex = ((found - 2) % #allSpacePairs) + 1
+  if allSpacePairs[prevIndex][1] == curScreenId then
     MoveWindowOneSpace('left', true)
   end
-  if allSpaces[found - 1][1] ~= curScreenId then
+  if allSpacePairs[prevIndex][1] ~= curScreenId then
     local max = curScreen:frame()
     W.move(-max.w, 0, 0)
     W.locateCenter()
@@ -572,26 +575,28 @@ function W.moveToNextSpace()
   local curScreen = win:screen()
   local curScreenId = curScreen:getUUID()
   local curSpace = hs.spaces.activeSpaceOnScreen(curScreen)
-  local allSpaces = {}
-  for k1, v1 in pairs(hs.spaces.allSpaces()) do
+  local allSpaces = hs.spaces.allSpaces()
+  local allSpacePairs = {}
+  for k1, v1 in pairs(allSpaces) do
     for _, v2 in pairs(v1) do
-      table.insert(allSpaces, { k1, v2 })
+      table.insert(allSpacePairs, { k1, v2 })
     end
   end
   local found = -1
-  for i, v in pairs(allSpaces) do
+  for i, v in pairs(allSpacePairs) do
     if v[1] == curScreenId and v[2] == curSpace then
       found = i
       break
     end
   end
-  if found == -1 or found + 1 > #allSpaces then
+  if found == -1 then
     return
   end
-  if allSpaces[found + 1][1] == curScreenId then
+  local nextIndex = (found % #allSpacePairs) + 1
+  if allSpacePairs[nextIndex][1] == curScreenId then
     MoveWindowOneSpace('right', true)
   end
-  if allSpaces[found + 1][1] ~= curScreenId then
+  if allSpacePairs[nextIndex][1] ~= curScreenId then
     local max = curScreen:frame()
     W.move(max.w, 0, 0)
     W.locateCenter()
